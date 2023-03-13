@@ -1,7 +1,7 @@
 package com.github.niipi.ohii_harjoitustyo;
 
 /**
- * Class for creating individual houseplant objects. Includes fields name, litresOfWater and daysBetweenWatering.
+ * Class for creating individual houseplant objects. Includes three fields: name, litresOfWater and daysBetweenWatering.
  * Preliminary methods waterPerWeek and waterPer28Days are included for future needs of watering schedule optimization.
  * @author Niina Piiroinen
  **/
@@ -55,6 +55,7 @@ public class Houseplant {
 
    /**
     * Checks if the watering needs of two houseplant objects are identical.
+    * @return boolean
     **/
     public boolean equals(Houseplant h) {
         if (h.litresOfWater == this.litresOfWater && h.daysBetweenWatering == this.daysBetweenWatering) {
@@ -68,6 +69,7 @@ public class Houseplant {
     /**
      * Calculates average amount of water in a week for the houseplant. Used to find the closest match
      * between different houseplant objects and their weekly watering needs.
+     * @return double
      **/
     public double waterPerWeek() {
         return this.litresOfWater/(this.daysBetweenWatering/7);
@@ -76,6 +78,7 @@ public class Houseplant {
     /**
      * Calculates average amount of water in a 28 day period for the houseplant. Used to find the closest match
      * between different houseplant objects and their monthly watering needs.
+     * @return double
      **/
     public double waterPer28Days() {
         return this.litresOfWater/(this.daysBetweenWatering/28);
