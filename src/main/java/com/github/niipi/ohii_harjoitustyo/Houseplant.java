@@ -1,11 +1,13 @@
 package com.github.niipi.ohii_harjoitustyo;
 
+import java.io.Serializable;
+
 /**
  * Class for creating individual houseplant objects. Includes three fields: name, litresOfWater and daysBetweenWatering.
  * Preliminary methods waterPerWeek and waterPer28Days are included for future needs of watering schedule optimization.
  * @author Niina Piiroinen
  **/
-public class Houseplant {
+public class Houseplant implements Serializable {
 
     private String name;
     private double litresOfWater;
