@@ -3,6 +3,10 @@ package com.github.niipi.ohii_harjoitustyo;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Stores and retrieves serialized houseplant objects from a save file.
+ * @author Niina Piiroinen
+ **/
 public class PlantData {
 
     protected static ArrayList<Houseplant> plants = new ArrayList<Houseplant>();
@@ -15,10 +19,7 @@ public class PlantData {
     protected static void saveToFile() throws IOException {
         FileOutputStream fileout = new FileOutputStream(filename);
         ObjectOutputStream out = new ObjectOutputStream(fileout);
-
-        for (int i = 0; i < plants.size(); i++) {
-            out.writeObject(plants.get(i));
-        }
+        out.writeObject(plants);
 
         fileout.close();
     }
@@ -29,20 +30,14 @@ public class PlantData {
     protected static void readFromFile() throws IOException, ClassNotFoundException {
         File plantfile = new File(filename);
         if (plantfile.exists()) {
-            FileInputStream filein = new FileInputStream(filename);
-            ObjectInputStream in = new ObjectInputStream(filein);
-            try {
-                Object o;
-                while ((o = in.readObject()) != null) {
-                    if (o instanceof Houseplant)
-                        plants.add((Houseplant) o);
-                }
+
+            try (FileInputStream filein = new FileInputStream(filename);
+                 ObjectInputStream in = new ObjectInputStream(filein);){
+                plants = (ArrayList<Houseplant>) in.readObject();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                filein.close();
             }
         }
     }

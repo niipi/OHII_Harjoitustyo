@@ -1,6 +1,7 @@
 package com.github.niipi.ohii_harjoitustyo;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Class for creating individual houseplant objects. Includes three fields: name, litresOfWater and daysBetweenWatering.
@@ -55,11 +56,19 @@ public class Houseplant implements Serializable {
                 ", kasteluväli=" + daysBetweenWatering;
     }
 
-   /**
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Houseplant that = (Houseplant) o;
+        return Double.compare(that.getLitresOfWater(), getLitresOfWater()) == 0 && getDaysBetweenWatering() == that.getDaysBetweenWatering() && Objects.equals(getName(), that.getName());
+    }
+
+    /**
     * Checks if the watering needs of two houseplant objects are identical.
     * @return boolean
     **/
-    public boolean equals(Houseplant h) {
+    public boolean equalNeeds(Houseplant h) {
         if (h.litresOfWater == this.litresOfWater && h.daysBetweenWatering == this.daysBetweenWatering) {
             return true;
         }
