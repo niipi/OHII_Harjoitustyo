@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -121,10 +120,11 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         plantsFromFile();
         BorderPane panel = new BorderPane();
-        VBox plants = new VBox(addedPlants, newPlantPane());
-        panel.setTop(plants);
+        //VBox plants = new VBox(addedPlants, newPlantPane());
+       // panel.setTop(plants);
+        panel.setCenter(WateringCalendar.calView());
         panel.setRight(saveButton());
-        Scene scene = new Scene(panel, 800, 500);
+        Scene scene = new Scene(panel);
         stage.setTitle("Huonekasvien kastelun aikatauluttaja");
         stage.setScene(scene);
         stage.show();
