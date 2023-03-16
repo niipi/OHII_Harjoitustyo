@@ -25,7 +25,8 @@ import java.util.Calendar;
 public class Main extends Application {
 
     private TextField[] fields = new TextField[3];
-    private ArrayList<Houseplant> addedPlants = PlantData.plants;
+    private PlantData datafile = new PlantData();
+    private ArrayList<Houseplant> addedPlants = datafile.readFromFile();
 
     /**
      * Displays addedPlants.
@@ -86,7 +87,7 @@ public class Main extends Application {
             }
         }
         Houseplant h = new Houseplant(n, l, d);
-        PlantData.plants.add(h);
+        addedPlants.add(h);
     }
 
     /**
@@ -97,7 +98,7 @@ public class Main extends Application {
         Button save = new Button("Tallenna");
         save.setOnAction(e -> {
             try {
-                PlantData.saveToFile();
+                datafile.saveToFile(addedPlants);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -165,7 +166,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         BorderPane panel = new BorderPane();
         VBox plants = new VBox(new Pane(plantDescription()), newPlantPane());
         panel.setTop(plants);
