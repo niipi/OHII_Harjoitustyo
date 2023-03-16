@@ -137,8 +137,9 @@ public class Main extends Application {
         VBox calpage = new VBox();
         GridPane cal = new GridPane();
         int empties = wateringCalendar.howManyDaysOfWeekToFrameInCalendar(); // Returns the number of empty gray cells at the beginning of a calendar month
+        int weeksTotal = wateringCalendar.howManyWeeksInCurrentMonth();
         int dayNum = 1;
-        for (int weeknum = 0; weeknum < 5; weeknum++) {
+        for (int weeknum = 0; weeknum < weeksTotal; weeknum++) {
             for (int weekday = 0; weekday < 7; weekday++) {
                 StackPane cell = new StackPane();
                 cell.getChildren().add(whiteRectangle());

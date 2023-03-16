@@ -39,6 +39,10 @@ public class WateringCalendar {
         return weekdaysToFirstOfMonth;
     }
 
+    int howManyWeeksInCurrentMonth() {
+         return calendar.getActualMaximum(calendar.WEEK_OF_MONTH);
+    }
+
     /**
      * Compares current day to the last day of current month. Returns true if date is the same.
      * @return boolean
