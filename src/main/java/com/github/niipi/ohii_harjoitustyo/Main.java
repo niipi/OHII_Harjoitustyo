@@ -7,12 +7,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 
 /**
@@ -22,27 +25,18 @@ import java.io.IOException;
 public class Main extends Application {
 
     private TextField[] fields = new TextField[3];
-    private FlowPane addedPlants = new FlowPane();
+    private ArrayList<Houseplant> addedPlants = PlantData.plants;
 
     /**
-     * Checks if the ArrayList of houseplant objects in PlantData module has been populated from a previous save file.
-     * If ArrayList is populated, the houseplants are added to the addedPlants FlowPane to be displayed.
+     * Displays addedPlants.
+     * @return Text
      **/
-    private void plantsFromFile() {
-        // PlantData.readFromFile is called to look for a save file and populate the ArrayList if file exists.
-        try {
-            PlantData.readFromFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+    private Text plantDescription() {
+        String plantstring = "";
+        for (Houseplant h : addedPlants) {
+            plantstring.replace(plantstring, plantstring+h.toString()+"\n");
         }
-        // Houseplant objects are read from ArrayList and returned as Text elements in the FlowPane.
-        for (int i = 0; i < PlantData.plants.size(); i++) {
-            Houseplant h = PlantData.plants.get(i);
-            Text plantDesc = new Text(h.toString());
-            addedPlants.getChildren().add(plantDesc);
-        }
+        return new Text(plantstring);
     }
 
     /**
@@ -50,7 +44,6 @@ public class Main extends Application {
      * @return FlowPane
      **/
     private FlowPane newPlantPane() {
-        addedPlants.setOrientation(Orientation.VERTICAL);
         Label[] labels = {new Label("Lajike:"), new Label("Vedentarve litroina:"), new Label("Päiviä kasteluiden välillä:")};
         FlowPane newPlantInfo = new FlowPane();
         newPlantInfo.setOrientation(Orientation.HORIZONTAL);
@@ -92,11 +85,8 @@ public class Main extends Application {
                 d = Integer.parseInt(fields[i].getText());
             }
         }
-        // Plant information is shown as Text. This functionality is subject to change as project progresses.
         Houseplant h = new Houseplant(n, l, d);
         PlantData.plants.add(h);
-        Text plantDesc = new Text(h.toString());
-        addedPlants.getChildren().add(plantDesc);
     }
 
     /**
@@ -116,13 +106,69 @@ public class Main extends Application {
         return save;
     }
 
+    /**
+     * Draws a white cell in the calendar view.
+     * @return Rectangle
+     **/
+    private Rectangle whiteRectangle() {
+        Rectangle r = new Rectangle(100,100);
+        r.setFill(Color.WHITE);
+        r.setStroke(Color.BLACK);
+        return r;
+    }
+
+    /**
+     * Draws a gray cell in the calendar view.
+     * @return Rectangle
+     **/
+    private Rectangle grayRectangle() {
+        Rectangle r = new Rectangle(100,100);
+        r.setFill(Color.GRAY);
+        r.setStroke(Color.BLACK);
+        return r;
+    }
+
+    /**
+     * Draws a calendar view and creates an instance of the WateringCalendar class.
+     * @return VBOX
+     **/
+    public VBox calendarView() {
+        WateringCalendar wateringCalendar = new WateringCalendar();
+        VBox calpage = new VBox();
+        GridPane cal = new GridPane();
+        int empties = wateringCalendar.howManyDaysOfWeekToFrameInCalendar(); // Returns the number of empty gray cells at the beginning of a calendar month
+        int dayNum = 1;
+        for (int weeknum = 0; weeknum < 5; weeknum++) {
+            for (int weekday = 0; weekday < 7; weekday++) {
+                StackPane cell = new StackPane();
+                cell.getChildren().add(whiteRectangle());
+                if (empties > 0) {
+                    cell.getChildren().add(grayRectangle());
+                    empties--;
+                }
+                else if (weeknum == 4 && wateringCalendar.isItTheLastDayOfThisMonth()) {
+                    dayNum = 1;
+                    cell.getChildren().add(grayRectangle());
+                }
+                else {
+                    Text day = new Text(String.valueOf(dayNum));
+                    wateringCalendar.calendar.set(Calendar.DAY_OF_MONTH, dayNum);
+                    cell.getChildren().add(day);
+                    dayNum++;
+                }
+                cal.add(cell, weekday, weeknum);
+            }
+        }
+        calpage.getChildren().addAll(wateringCalendar.month, cal);
+        return calpage;
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
-        plantsFromFile();
         BorderPane panel = new BorderPane();
-        //VBox plants = new VBox(addedPlants, newPlantPane());
-       // panel.setTop(plants);
-        panel.setCenter(WateringCalendar.calView());
+        VBox plants = new VBox(new Pane(plantDescription()), newPlantPane());
+        panel.setTop(plants);
+        panel.setCenter(calendarView());
         panel.setRight(saveButton());
         Scene scene = new Scene(panel);
         stage.setTitle("Huonekasvien kastelun aikatauluttaja");
