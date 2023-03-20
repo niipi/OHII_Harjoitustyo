@@ -9,13 +9,13 @@ import java.util.*;
  * Creates calendar functionality based on which the main program draws the watering schedule.
  * @author Niina Piiroinen
  **/
-public class WateringCalendar {
+public class CalendarView {
 
-    Calendar calendar = Calendar.getInstance(new Locale("fi", "FI"));
+    java.util.Calendar calendar = java.util.Calendar.getInstance(new Locale("fi", "FI"));
     private SimpleDateFormat dfMonth = new SimpleDateFormat("MMMM");
     Text month = new Text(dfMonth.format(calendar.getTime()));
 
-    public WateringCalendar() {
+    public CalendarView() {
         //empty constructor
     }
 
@@ -28,7 +28,7 @@ public class WateringCalendar {
         calendar.set(Calendar.WEEK_OF_MONTH, 1);
         int dayOfWeek = calendar.get(calendar.DAY_OF_WEEK);
         int dayOfMonth = calendar.get(calendar.DAY_OF_MONTH);
-        int weekOfMonth = calendar.get(Calendar.WEEK_OF_MONTH);
+        int weekOfMonth = calendar.get(calendar.WEEK_OF_MONTH);
         int weekdaysToFirstOfMonth = 0;
         if (weekOfMonth == 1) {
             if (dayOfWeek - 1 == dayOfMonth)

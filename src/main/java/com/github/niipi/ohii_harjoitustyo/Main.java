@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 
 
 /**
@@ -27,6 +27,7 @@ public class Main extends Application {
     private TextField[] fields = new TextField[3];
     private PlantData datafile = new PlantData();
     private ArrayList<Houseplant> addedPlants = datafile.readFromFile();
+    private WateringScheduler scheduler = new WateringScheduler(addedPlants);
 
     /**
      * Displays addedPlants.
@@ -134,11 +135,12 @@ public class Main extends Application {
      * @return VBOX
      **/
     public VBox calendarView() {
-        WateringCalendar wateringCalendar = new WateringCalendar();
+        CalendarView calendarView = new CalendarView();
         VBox calpage = new VBox();
         GridPane cal = new GridPane();
-        int empties = wateringCalendar.howManyDaysOfWeekToFrameInCalendar(); // Returns the number of empty gray cells at the beginning of a calendar month
-        int weeksTotal = wateringCalendar.howManyWeeksInCurrentMonth();
+
+        int empties = calendarView.howManyDaysOfWeekToFrameInCalendar(); // Returns the number of empty gray cells at the beginning of a calendar month
+        int weeksTotal = calendarView.howManyWeeksInCurrentMonth();
         int dayNum = 1;
         for (int weeknum = 0; weeknum < weeksTotal; weeknum++) {
             for (int weekday = 0; weekday < 7; weekday++) {
@@ -148,30 +150,32 @@ public class Main extends Application {
                     cell.getChildren().add(grayRectangle());
                     empties--;
                 }
-                else if (weeknum == 4 && wateringCalendar.isItTheLastDayOfThisMonth()) {
+                else if (weeknum == weeksTotal-1 && calendarView.isItTheLastDayOfThisMonth()) {
                     dayNum = 1;
                     cell.getChildren().add(grayRectangle());
                 }
                 else {
                     Text day = new Text(String.valueOf(dayNum));
-                    wateringCalendar.calendar.set(Calendar.DAY_OF_MONTH, dayNum);
+                    calendarView.calendar.set(java.util.Calendar.DAY_OF_MONTH, dayNum);
                     cell.getChildren().add(day);
                     dayNum++;
                 }
                 cal.add(cell, weekday, weeknum);
             }
         }
-        calpage.getChildren().addAll(wateringCalendar.month, cal);
+        calpage.getChildren().addAll(calendarView.month, cal);
         return calpage;
     }
 
     @Override
     public void start(Stage stage) {
         BorderPane panel = new BorderPane();
+        Text testing = new Text("Veden tarve viikossa: "+scheduler.waterPerWeek()+" litraa");
         VBox plants = new VBox(new Pane(plantDescription()), newPlantPane());
         panel.setTop(plants);
         panel.setCenter(calendarView());
         panel.setRight(saveButton());
+        panel.setBottom(testing);
         Scene scene = new Scene(panel);
         stage.setTitle("Huonekasvien kastelun aikatauluttaja");
         stage.setScene(scene);

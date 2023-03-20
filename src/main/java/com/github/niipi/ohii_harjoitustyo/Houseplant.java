@@ -8,7 +8,7 @@ import java.util.Objects;
  * Preliminary methods waterPerWeek and waterPer28Days are included for future needs of watering schedule optimization.
  * @author Niina Piiroinen
  **/
-public class Houseplant implements Serializable {
+public class Houseplant implements Serializable, WateringNeeds {
 
     private String name;
     private double litresOfWater;
@@ -82,9 +82,7 @@ public class Houseplant implements Serializable {
      * between different houseplant objects and their weekly watering needs.
      * @return double
      **/
-    public double waterPerWeek() {
-        return this.litresOfWater/(this.daysBetweenWatering/7);
-    }
+    public double waterPerWeek() { return this.litresOfWater/(this.daysBetweenWatering/7); }
 
     /**
      * Calculates average amount of water in a 28 day period for the houseplant. Used to find the closest match
