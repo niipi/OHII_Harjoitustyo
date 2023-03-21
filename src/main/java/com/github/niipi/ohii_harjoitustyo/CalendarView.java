@@ -11,12 +11,17 @@ import java.util.*;
  **/
 public class CalendarView {
 
-    java.util.Calendar calendar = java.util.Calendar.getInstance(new Locale("fi", "FI"));
+    private java.util.Calendar calendar = Calendar.getInstance(new Locale("fi", "FI"));
     private SimpleDateFormat dfMonth = new SimpleDateFormat("MMMM");
     Text month = new Text(dfMonth.format(calendar.getTime()));
 
     public CalendarView() {
-        //empty constructor
+        calendar.clear();
+        calendar.set(Calendar.YEAR, Calendar.MONTH, 1, 0, 0);
+    }
+
+    void addOneDay() {
+        calendar.add(calendar.DAY_OF_MONTH, 1);
     }
 
     /**
@@ -25,16 +30,18 @@ public class CalendarView {
      * @return int
      **/
      int howManyDaysOfWeekToFrameInCalendar() {
-        calendar.set(Calendar.WEEK_OF_MONTH, 1);
-        int dayOfWeek = calendar.get(calendar.DAY_OF_WEEK);
-        int dayOfMonth = calendar.get(calendar.DAY_OF_MONTH);
-        int weekOfMonth = calendar.get(calendar.WEEK_OF_MONTH);
-        int weekdaysToFirstOfMonth = 0;
-        if (weekOfMonth == 1) {
+         Calendar temp = Calendar.getInstance();
+         temp.clear();
+         temp.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1, 0,0);
+         int dayOfWeek = temp.get(Calendar.DAY_OF_WEEK);
+         int dayOfMonth = temp.get(Calendar.DAY_OF_MONTH);
+         int weekOfMonth = temp.get(Calendar.WEEK_OF_MONTH);
+         int weekdaysToFirstOfMonth = 0;
+         if (weekOfMonth == 1) {
             if (dayOfWeek - 1 == dayOfMonth)
                 weekdaysToFirstOfMonth = 0;
             else if (dayOfWeek - 1 > dayOfMonth)
-                weekdaysToFirstOfMonth = (dayOfWeek - 1) - dayOfMonth;
+                weekdaysToFirstOfMonth = (dayOfWeek) - dayOfMonth;
         }
         return weekdaysToFirstOfMonth;
     }

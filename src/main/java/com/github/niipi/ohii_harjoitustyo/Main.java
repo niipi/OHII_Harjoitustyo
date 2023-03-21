@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 /**
@@ -138,25 +140,31 @@ public class Main extends Application {
         CalendarView calendarView = new CalendarView();
         VBox calpage = new VBox();
         GridPane cal = new GridPane();
-
         int empties = calendarView.howManyDaysOfWeekToFrameInCalendar(); // Returns the number of empty gray cells at the beginning of a calendar month
+        boolean end = false;
         int weeksTotal = calendarView.howManyWeeksInCurrentMonth();
         int dayNum = 1;
         for (int weeknum = 0; weeknum < weeksTotal; weeknum++) {
             for (int weekday = 0; weekday < 7; weekday++) {
                 StackPane cell = new StackPane();
                 cell.getChildren().add(whiteRectangle());
-                if (empties > 0) {
+                if (empties > 0) { // Fill in empty days at the beginning of month
                     cell.getChildren().add(grayRectangle());
                     empties--;
                 }
-                else if (weeknum == weeksTotal-1 && calendarView.isItTheLastDayOfThisMonth()) {
+                else if (calendarView.isItTheLastDayOfThisMonth()) { // Draw last day of month, set end of month
+                    Text day = new Text(String.valueOf(dayNum));
+                    calendarView.addOneDay();
+                    cell.getChildren().add(day);
                     dayNum = 1;
+                    end = true;
+                }
+                else if (end) { // Fill in empty days at the end of the month
                     cell.getChildren().add(grayRectangle());
                 }
                 else {
                     Text day = new Text(String.valueOf(dayNum));
-                    calendarView.calendar.set(java.util.Calendar.DAY_OF_MONTH, dayNum);
+                    calendarView.addOneDay();
                     cell.getChildren().add(day);
                     dayNum++;
                 }
