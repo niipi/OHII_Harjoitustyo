@@ -9,8 +9,7 @@ import java.util.ArrayList;
 public class WateringScheduler implements WateringNeeds {
 
     private ArrayList<Houseplant> plants;
-    private ArrayList<Houseplant> low;
-    private ArrayList<Houseplant> high;
+
 
     public WateringScheduler(ArrayList<Houseplant> plants) {
         this.plants = plants;
@@ -24,21 +23,6 @@ public class WateringScheduler implements WateringNeeds {
         this.plants = plants;
     }
 
-    public ArrayList<Houseplant> getLow() {
-        return low;
-    }
-
-    public void setLow(ArrayList<Houseplant> low) {
-        this.low = low;
-    }
-
-    public ArrayList<Houseplant> getHigh() {
-        return high;
-    }
-
-    public void setHigh(ArrayList<Houseplant> high) {
-        this.high = high;
-    }
 
     /**
      * Calculates weekly water need for all houseplants entered into the program.
@@ -66,25 +50,31 @@ public class WateringScheduler implements WateringNeeds {
         return litres;
     }
 
-    public void sortPlantsByWateringNeeds() {
-        double perWeek = waterPerWeek();
-        double perMonth = waterPer28Days();
-        for (Houseplant houseplant : plants) {
-            if (houseplant.waterPer28Days() < 0.5) {
-                low.add(houseplant);
-            }
-            else if (houseplant.waterPer28Days() < 0.9 && houseplant.waterPerWeek() < 0.15) {
-                low.add(houseplant);
-            }
-            else {
-                high.add(houseplant);
+    /**
+     * Checks if current day in CalendarView object is a watering day for any of the plants.
+     * @return boolean
+     **/
+    public boolean isItTimeToWaterThisPlant(CalendarView calendarView) {
+        boolean wateringTime = false;
+        for (Houseplant h : plants) {
+            if (h.getDaysBetweenWatering() == calendarView.whatDayNumberIsIt()) {
+                wateringTime = true;
             }
         }
+        return wateringTime;
     }
 
     /**
-     * Checks if there are more plants with high frequency watering needs. **/
-    public boolean hasMoreHighWateringNeeds() {
-        return high.size() > low.size();
+     * Prints a string about watering dates for a houseplant.
+     * @return String
+     **/
+    public String whenToWaterAPlant(CalendarView calendarView) {
+        String wateringDay = "";
+        for (Houseplant h : plants) {
+            if (h.getDaysBetweenWatering() == calendarView.whatDayNumberIsIt()) {
+                wateringDay = h.getName().toString()+" on kasteltava "+calendarView.whatDayIsIt();
+            }
+        }
+        return wateringDay;
     }
 }

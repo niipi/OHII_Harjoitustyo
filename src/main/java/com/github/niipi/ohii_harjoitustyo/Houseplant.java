@@ -82,7 +82,7 @@ public class Houseplant implements Serializable, WateringNeeds {
      * between different houseplant objects and their weekly watering needs.
      * @return double
      **/
-    public double waterPerWeek() { return this.litresOfWater/(this.daysBetweenWatering/7); }
+    public double waterPerWeek() { return this.litresOfWater/(this.daysBetweenWatering/(double)7); }
 
     /**
      * Calculates average amount of water in a 28 day period for the houseplant. Used to find the closest match
@@ -90,6 +90,6 @@ public class Houseplant implements Serializable, WateringNeeds {
      * @return double
      **/
     public double waterPer28Days() {
-        return this.litresOfWater/(this.daysBetweenWatering/28);
+        return this.litresOfWater/(this.daysBetweenWatering/(double)28);
     }
 }

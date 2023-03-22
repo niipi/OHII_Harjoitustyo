@@ -12,14 +12,43 @@ import java.util.*;
 public class CalendarView {
 
     private java.util.Calendar calendar = Calendar.getInstance(new Locale("fi", "FI"));
-    private SimpleDateFormat dfMonth = new SimpleDateFormat("MMMM");
-    Text month = new Text(dfMonth.format(calendar.getTime()));
 
     public CalendarView() {
         calendar.clear();
         calendar.set(Calendar.YEAR, Calendar.MONTH, 1, 0, 0);
     }
 
+    /**
+     * Returns current day of month as an integer.
+     * @return int
+     **/
+    int whatDayNumberIsIt() {
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * Returns current date as a String. Used for showing watering days from WateringScheduler.
+     * @return String
+     **/
+    String whatDayIsIt() {
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH)+1;
+        return day+"."+month+".";
+    }
+
+    /**
+     * Returns current month as a String. Used for drawing a calendar page in Main.
+     * @return String
+     **/
+    String whatMonthIsIt() {
+        SimpleDateFormat dfMonth = new SimpleDateFormat("MMMM");
+        String month = dfMonth.format(calendar.getTime());
+        return month;
+    }
+
+    /**
+     * Bump calendar to next day.
+     **/
     void addOneDay() {
         calendar.add(calendar.DAY_OF_MONTH, 1);
     }
@@ -46,6 +75,10 @@ public class CalendarView {
         return weekdaysToFirstOfMonth;
     }
 
+    /**
+     * Checks how many weeks current month consists of. Used for drawing the calendar in Main.
+     * @return int
+     **/
     int howManyWeeksInCurrentMonth() {
          return calendar.getActualMaximum(calendar.WEEK_OF_MONTH);
     }
