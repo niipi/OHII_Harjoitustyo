@@ -1,6 +1,8 @@
 package com.github.niipi.ohii_harjoitustyo;
 
 import javafx.scene.text.Text;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -80,7 +82,7 @@ public class CalendarView {
      * @return int
      **/
     int howManyWeeksInCurrentMonth() {
-         return calendar.getActualMaximum(calendar.WEEK_OF_MONTH);
+        return calendar.getActualMaximum(calendar.WEEK_OF_MONTH);
     }
 
     /**
@@ -89,5 +91,47 @@ public class CalendarView {
      **/
     boolean isItTheLastDayOfThisMonth() {
          return calendar.get(calendar.DAY_OF_MONTH) == calendar.getActualMaximum(calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * Compares two Strings of dates and returns and the difference of days as integer.
+     * @params String dateA, String dateB
+     * @return int
+     **/
+    int howManyDaysBetweenDates(String dateA, String dateB) {
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.");
+        Date A;
+        Date B;
+        int difference = 0;
+        try {
+            A = df.parse(dateA);
+            B = df.parse(dateB);
+            difference = B.compareTo(A);
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return difference;
+    }
+
+    String nextDateAfterGivenNumberOfDays(String date, int days) {
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.");
+        Calendar temp = Calendar.getInstance(new Locale("fi", "FI"));
+        String result = "";
+        try {
+            Date original = df.parse(date);
+            temp.setTime(original);
+            for (int i = 0; i > days; i++) {
+                temp.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            Date afterGivenNumberOfDays = temp.getTime();
+            df.format(afterGivenNumberOfDays);
+            result = afterGivenNumberOfDays.toString();
+            return result;
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

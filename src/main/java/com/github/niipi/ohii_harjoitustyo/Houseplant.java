@@ -13,6 +13,7 @@ public class Houseplant implements Serializable, WateringNeeds {
     private String name;
     private double litresOfWater;
     private int daysBetweenWatering;
+    private String lastWatered;
 
     public Houseplant() {
         // empty constructor
@@ -22,6 +23,7 @@ public class Houseplant implements Serializable, WateringNeeds {
         this.name = n;
         this.litresOfWater = litre;
         this.daysBetweenWatering = days;
+        this.lastWatered = "1.3.";
     }
 
     public String getName() {
@@ -46,6 +48,14 @@ public class Houseplant implements Serializable, WateringNeeds {
 
     public void setDaysBetweenWatering(int days) {
         this.daysBetweenWatering = days;
+    }
+
+    public String getLastWatered() {
+        return lastWatered;
+    }
+
+    public void setLastWatered(String lastWatered) {
+        this.lastWatered = lastWatered;
     }
 
     @Override

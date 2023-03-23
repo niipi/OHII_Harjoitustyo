@@ -27,10 +27,23 @@ public class Main extends Application {
     private TextField[] fields = new TextField[3];
     private PlantData datafile = new PlantData();
     private ArrayList<Houseplant> addedPlants = datafile.readFromFile();
-    private CalendarView calendarView = new CalendarView();
     private WateringScheduler scheduler = new WateringScheduler(addedPlants);
     private FlowPane plantdesc = new FlowPane();
     private FlowPane wateringDates = new FlowPane();
+    private BorderPane panel = new BorderPane();
+
+
+    private void updateView() {
+        wateringDates.getChildren().clear();
+        scheduler.setPlants(addedPlants);
+        panel.setCenter(calendarView());
+    }
+
+    /**
+     * To be continued...**/
+    private void updateWateringDates(CalendarView calendarView) {
+        wateringDates.getChildren().add(new Text(scheduler.whenToWaterAPlant(calendarView)));
+    }
 
     /**
      * Displays addedPlants.
@@ -48,6 +61,7 @@ public class Main extends Application {
                 remove.setOnAction(e -> {
                     addedPlants.remove(h);
                     plantdesc.getChildren().removeAll(plantstring, remove);
+                    updateView();
                 });
                 plantdesc.getChildren().addAll(plantstring, remove);
             }
@@ -108,6 +122,7 @@ public class Main extends Application {
         }
         Houseplant h = new Houseplant(n, l, d);
         addedPlants.add(h);
+        updateView();
         plantDescription();
     }
 
@@ -120,7 +135,6 @@ public class Main extends Application {
         save.setOnAction(e -> {
             try {
                 datafile.saveToFile(addedPlants);
-                scheduler.setPlants(addedPlants);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -141,16 +155,40 @@ public class Main extends Application {
     }
 
     /**
+     * Draws one day (cell) in the calendar page. If day is a watering day, houseplants and watering needs are listed and the cell will be painted light green.
+     * @param calendarView
+     * @return StackPane
+     **/
+    private StackPane drawDayInCalendar(CalendarView calendarView) {
+        StackPane cell = new StackPane();
+        Text day = new Text(String.valueOf(calendarView.whatDayNumberIsIt()));
+        if (scheduler.isItTimeToWaterThisPlant(calendarView)) {
+            updateWateringDates(calendarView);
+            cell.getChildren().add(drawRectangle(Color.LIGHTGREEN));
+            for (Houseplant h : addedPlants) {
+               // if (scheduler.nextDateToWaterThisPlant(h, calendarView) == calendarView.whatDayIsIt()) {
+                    cell.getChildren().add(new Text(scheduler.plantToWaterToday(h, calendarView)));
+               // }
+            }
+        }
+        else {
+            cell.getChildren().add(day);
+        }
+        calendarView.addOneDay(); // Bump calendar one day forward
+        return cell;
+    }
+
+    /**
      * Draws a calendar view and creates an instance of the CalendarView class.
      * @return VBOX
      **/
     public VBox calendarView() {
+        CalendarView calendarView = new CalendarView();
         VBox calpage = new VBox();
         GridPane cal = new GridPane();
         Text monthname = new Text(calendarView.whatMonthIsIt().toUpperCase());
         int empties = calendarView.howManyDaysOfWeekToFrameInCalendar(); // Returns the number of empty gray cells at the beginning of a calendar month
         boolean end = false;
-        int dayNum = 1;
         for (int weeknum = 0; weeknum < calendarView.howManyWeeksInCurrentMonth(); weeknum++) {
             for (int weekday = 0; weekday < 7; weekday++) {
                 StackPane cell = new StackPane();
@@ -160,28 +198,14 @@ public class Main extends Application {
                     empties--;
                 }
                 else if (calendarView.isItTheLastDayOfThisMonth()) { // Draw last day of month, set end of month
-                    Text day = new Text(String.valueOf(dayNum));
-                    if (scheduler.isItTimeToWaterThisPlant(calendarView)) {
-                        wateringDates.getChildren().add(new Text(scheduler.whenToWaterAPlant(calendarView)));
-                        cell.getChildren().add(drawRectangle(Color.LIGHTGREEN));
-                    }
-                    calendarView.addOneDay();
-                    cell.getChildren().add(day);
-                    dayNum = 1;
+                    cell.getChildren().add(drawDayInCalendar(calendarView));
                     end = true;
                 }
                 else if (end) { // Fill in empty days at the end of the month
                     cell.getChildren().add(drawRectangle(Color.GRAY));
                 }
                 else { // Draw all other days in the calendar
-                    Text day = new Text(String.valueOf(dayNum));
-                   if (scheduler.isItTimeToWaterThisPlant(calendarView)) {
-                       wateringDates.getChildren().add(new Text(scheduler.whenToWaterAPlant(calendarView)));
-                       cell.getChildren().add(drawRectangle(Color.LIGHTGREEN));
-                   }
-                    calendarView.addOneDay();
-                    cell.getChildren().add(day);
-                    dayNum++;
+                    cell.getChildren().add(drawDayInCalendar(calendarView));
                 }
                 cal.add(cell, weekday, weeknum);
             }
@@ -192,7 +216,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        BorderPane panel = new BorderPane();
         wateringDates.setOrientation(Orientation.VERTICAL);
         VBox plants = new VBox(newPlantPane(), plantDescription(), saveButton(), wateringDates);
         panel.setLeft(plants);

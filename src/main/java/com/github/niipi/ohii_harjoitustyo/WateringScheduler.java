@@ -1,6 +1,7 @@
 package com.github.niipi.ohii_harjoitustyo;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * This class attempts to calculate an optimal schedule for watering all houseplants it is given.
@@ -50,6 +51,10 @@ public class WateringScheduler implements WateringNeeds {
         return litres;
     }
 
+    public String nextDateToWaterThisPlant(Houseplant h, CalendarView calendarView) {
+        return calendarView.nextDateAfterGivenNumberOfDays(h.getLastWatered(), h.getDaysBetweenWatering());
+    }
+
     /**
      * Checks if current day in CalendarView object is a watering day for any of the plants.
      * @return boolean
@@ -60,8 +65,17 @@ public class WateringScheduler implements WateringNeeds {
             if (h.getDaysBetweenWatering() == calendarView.whatDayNumberIsIt()) {
                 wateringTime = true;
             }
+            else if (nextDateToWaterThisPlant(h, calendarView) == calendarView.whatDayIsIt()) {
+                wateringTime = true;
+            }
         }
         return wateringTime;
+    }
+
+    public String plantToWaterToday(Houseplant h, CalendarView calendarView) {
+        String plantinfo = h.getName().toString()+"\n"+h.getLitresOfWater()+" l";
+        h.setLastWatered(calendarView.whatDayIsIt());
+        return plantinfo;
     }
 
     /**
@@ -72,7 +86,10 @@ public class WateringScheduler implements WateringNeeds {
         String wateringDay = "";
         for (Houseplant h : plants) {
             if (h.getDaysBetweenWatering() == calendarView.whatDayNumberIsIt()) {
-                wateringDay = h.getName().toString()+" on kasteltava "+calendarView.whatDayIsIt();
+                wateringDay = h.getName().toString() + " on kasteltava " + calendarView.whatDayIsIt();
+            }
+            else if (calendarView.howManyDaysBetweenDates(h.getLastWatered(), calendarView.whatDayIsIt()) == h.getDaysBetweenWatering()) {
+                wateringDay = wateringDay + " ja " + calendarView.whatDayIsIt();
             }
         }
         return wateringDay;
