@@ -40,6 +40,7 @@ public class Main extends Application {
             h.setLastWatered("1.3.");
         }
         scheduler.setPlants(addedPlants);
+        scheduler.setDateStrings(new String[addedPlants.size()]);
         panel.setCenter(calendarView());
     }
 
@@ -231,12 +232,12 @@ public class Main extends Application {
                 else { // Draw all other days in the calendar
                     cell.getChildren().add(drawDayInCalendar(calendarView));
                 }
-                String[] plantWateringInfo = scheduler.whenToWaterAPlant(calendarView);
-                showPlantWateringDates(plantWateringInfo);
                 cal.add(cell, weekday, weeknum);
             }
         }
         calpage.getChildren().addAll(monthname, cal);
+        String[] plantWateringInfo = scheduler.whenToWaterAPlant();
+        showPlantWateringDates(plantWateringInfo);
         return calpage;
     }
 
@@ -252,9 +253,10 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         wateringDates.setOrientation(Orientation.VERTICAL);
-        VBox plants = new VBox(newPlantPane(), plantDescription(), saveButton(), wateringDates);
+        VBox plants = new VBox(newPlantPane(), plantDescription(), saveButton());
         panel.setLeft(plants);
         panel.setCenter(calendarView());
+        panel.setBottom(wateringDates);
         updateView();
         Scene scene = new Scene(panel);
         stage.setTitle("Huonekasvien kastelun aikatauluttaja");
