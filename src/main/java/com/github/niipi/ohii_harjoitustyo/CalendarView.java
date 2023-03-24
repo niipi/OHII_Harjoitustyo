@@ -103,8 +103,8 @@ public class CalendarView {
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.");
             Date a = df.parse(dateA);
             Date b = df.parse(dateB);
-            long millisecondsBetween = b.getTime() - a.getTime();
-            long daysBetween = millisecondsBetween / (1000 * 60 * 60 * 24);
+            long millisecondsBetween = b.getTime() - a.getTime(); // Calculate difference of two dates in milliseconds
+            long daysBetween = millisecondsBetween / (1000 * 60 * 60 * 24); // Calculate difference in days from milliseconds
             return (int) daysBetween;
         }
         catch (ParseException e) {

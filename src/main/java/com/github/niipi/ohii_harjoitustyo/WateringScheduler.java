@@ -3,7 +3,7 @@ package com.github.niipi.ohii_harjoitustyo;
 import java.util.*;
 
 /**
- * This class attempts to calculate an optimal schedule for watering all houseplants it is given.
+ * Schedules watering dates for plants and keeps track of watering dates for each plant. Hopefully will also optimize watering schedules in the future implementations of the program.
  * @author Niina Piiroinen
  **/
 public class WateringScheduler implements WateringNeeds {
@@ -82,6 +82,11 @@ public class WateringScheduler implements WateringNeeds {
         return plantsToWater;
     }
 
+    /**
+     * Maps plants to dates: a name of a houseplant in mapDates is a key with the value of all its watering dates.
+     * The resulting map object is used to print and display all watering dates for the user.
+     * @params Houseplant, String
+     **/
     public void mapPlantsToDates(Houseplant h, String date) {
         if (date != null) {
             for (int i = 0; i < plants.size(); i++) {
