@@ -1,7 +1,6 @@
 package com.github.niipi.ohii_harjoitustyo;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 /**
  * This class attempts to calculate an optimal schedule for watering all houseplants it is given.
@@ -10,7 +9,6 @@ import java.util.Date;
 public class WateringScheduler implements WateringNeeds {
 
     private ArrayList<Houseplant> plants;
-
 
     public WateringScheduler(ArrayList<Houseplant> plants) {
         this.plants = plants;
@@ -51,47 +49,61 @@ public class WateringScheduler implements WateringNeeds {
         return litres;
     }
 
-    public String nextDateToWaterThisPlant(Houseplant h, CalendarView calendarView) {
-        return calendarView.nextDateAfterGivenNumberOfDays(h.getLastWatered(), h.getDaysBetweenWatering());
-    }
-
     /**
-     * Checks if current day in CalendarView object is a watering day for any of the plants.
+     * Checks if the distance of today and houseplants last watering day match the houseplants watering frequency.
+     * @params Houseplant, CalendarView
      * @return boolean
      **/
-    public boolean isItTimeToWaterThisPlant(CalendarView calendarView) {
-        boolean wateringTime = false;
-        for (Houseplant h : plants) {
-            if (h.getDaysBetweenWatering() == calendarView.whatDayNumberIsIt()) {
-                wateringTime = true;
-            }
-            else if (nextDateToWaterThisPlant(h, calendarView) == calendarView.whatDayIsIt()) {
-                wateringTime = true;
-            }
-        }
-        return wateringTime;
-    }
-
-    public String plantToWaterToday(Houseplant h, CalendarView calendarView) {
-        String plantinfo = h.getName().toString()+"\n"+h.getLitresOfWater()+" l";
-        h.setLastWatered(calendarView.whatDayIsIt());
-        return plantinfo;
+    private boolean isItTimeToWaterThisPlant(Houseplant h, CalendarView calendarView) {
+        return calendarView.howManyDaysBetweenDates(h.getLastWatered(), calendarView.whatDayIsIt()) == h.getDaysBetweenWatering();
     }
 
     /**
-     * Prints a string about watering dates for a houseplant.
-     * @return String
+     * Creates a list of plant watering information based on current date.
+     * @return ArrayList<String>
      **/
-    public String whenToWaterAPlant(CalendarView calendarView) {
-        String wateringDay = "";
+    public ArrayList<String> plantsToWaterToday(CalendarView calendarView) {
+        ArrayList<String> plantsToWater = new ArrayList<>();
         for (Houseplant h : plants) {
-            if (h.getDaysBetweenWatering() == calendarView.whatDayNumberIsIt()) {
-                wateringDay = h.getName().toString() + " on kasteltava " + calendarView.whatDayIsIt();
-            }
-            else if (calendarView.howManyDaysBetweenDates(h.getLastWatered(), calendarView.whatDayIsIt()) == h.getDaysBetweenWatering()) {
-                wateringDay = wateringDay + " ja " + calendarView.whatDayIsIt();
+            if (isItTimeToWaterThisPlant(h, calendarView)) {
+                String plantinfo = h.getName().toString()+"\n"+h.getLitresOfWater()+" l";
+                plantsToWater.add(plantinfo);
+                h.setLastWatered(calendarView.whatDayIsIt());
             }
         }
-        return wateringDay;
+        return plantsToWater;
+    }
+
+    /**
+     * Creates an array of strings about watering dates for a houseplants. Magnificently horrible last minute solution before deadline, will need to be fixed.
+     * @return String[]
+     **/
+    public String[] whenToWaterAPlant(CalendarView calendarView) {
+        String[] plantWateringDays = new String[plants.size()];
+        Map<String, List<String>> mapDates = new HashMap<>();
+        List<String> dates = new ArrayList<String>();
+        for (int i = 0; i < plants.size(); i++) { // Map plants to their respective watering dates
+                if (isItTimeToWaterThisPlant(plants.get(i), calendarView)) {
+                    dates.add(calendarView.whatDayIsIt());
+            }
+            mapDates.put(plants.get(i).getName().toString(), dates);
+        }
+        for (int j = 0; j < plants.size(); j++) { // Construct strings based on dates mapped to specific plant
+            String plantName = plants.get(j).getName().toString();
+            plantWateringDays[j] = plantName+" on kasteltava ";
+            List<String> datesOfPlant = mapDates.get(plantName);
+            for (int k = 0; k < datesOfPlant.size(); k++) {
+                if (k<datesOfPlant.size()-2) {
+                    plantWateringDays[j] += datesOfPlant.get(k) + ", ";
+                }
+                else if (k == datesOfPlant.size()-2){
+                    plantWateringDays[j] += datesOfPlant.get(k) + " ja ";
+                }
+                else {
+                    plantWateringDays[j] += datesOfPlant.get(k);
+                }
+            }
+        }
+        return plantWateringDays;
     }
 }

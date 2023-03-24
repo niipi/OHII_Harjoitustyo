@@ -99,39 +99,17 @@ public class CalendarView {
      * @return int
      **/
     int howManyDaysBetweenDates(String dateA, String dateB) {
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.");
-        Date A;
-        Date B;
-        int difference = 0;
         try {
-            A = df.parse(dateA);
-            B = df.parse(dateB);
-            difference = B.compareTo(A);
+            SimpleDateFormat df = new SimpleDateFormat("dd.MM.");
+            Date a = df.parse(dateA);
+            Date b = df.parse(dateB);
+            long millisecondsBetween = b.getTime() - a.getTime();
+            long daysBetween = millisecondsBetween / (1000 * 60 * 60 * 24);
+            return (int) daysBetween;
         }
         catch (ParseException e) {
             e.printStackTrace();
+            return -1;
         }
-        return difference;
-    }
-
-    String nextDateAfterGivenNumberOfDays(String date, int days) {
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.");
-        Calendar temp = Calendar.getInstance(new Locale("fi", "FI"));
-        String result = "";
-        try {
-            Date original = df.parse(date);
-            temp.setTime(original);
-            for (int i = 0; i > days; i++) {
-                temp.add(Calendar.DAY_OF_MONTH, 1);
-            }
-            Date afterGivenNumberOfDays = temp.getTime();
-            df.format(afterGivenNumberOfDays);
-            result = afterGivenNumberOfDays.toString();
-            return result;
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 }

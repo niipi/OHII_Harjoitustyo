@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -35,14 +36,11 @@ public class Main extends Application {
 
     private void updateView() {
         wateringDates.getChildren().clear();
+        for (Houseplant h : addedPlants) {
+            h.setLastWatered("1.3.");
+        }
         scheduler.setPlants(addedPlants);
         panel.setCenter(calendarView());
-    }
-
-    /**
-     * To be continued...**/
-    private void updateWateringDates(CalendarView calendarView) {
-        wateringDates.getChildren().add(new Text(scheduler.whenToWaterAPlant(calendarView)));
     }
 
     /**
@@ -105,25 +103,52 @@ public class Main extends Application {
      * EventHandler function for the button used to add new houseplants. Constructs a new Houseplant object based on user input, which is read from TextFields.
      **/
     public void addPlant() {
-        String n = "";
-        double l = 0.0;
-        int d = 0;
+        String plantName = "";
+        double litresOfWater = 0.0;
+        int daysBetweenWatering = 0;
+        boolean nameFilled = false;
+        boolean litresFilled = false;
+        boolean daysFilled = false;
         for (int i = 0; i < 3; i++) {
-            if (i == 0) {
-                n = fields[i].getText();
-            }
-            else if (i == 1) {
-                l = Double.parseDouble(fields[i].getText());
+            fields[i].setStyle("-fx-text-box-border: lightgrey;");
+            if (fields[i].getText() != "") {
+                if (i == 0) {
+                    plantName = fields[i].getText();
+                    nameFilled = true;
+                } else if (i == 1) {
+                    try {
+                        if (fields[i].getText().contains(",")) {
+                            int index = fields[i].getText().indexOf(",");
+                            String fixed = fields[i].getText().substring(0, index) + "." + fields[i].getText().substring(index + 1);
+                            litresOfWater = Double.parseDouble(fixed);
+                            litresFilled = true;
+                        } else {
+                            litresOfWater = Double.parseDouble(fields[i].getText());
+                            litresFilled = true;
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        daysBetweenWatering = Integer.parseInt(fields[i].getText());
+                        daysFilled = true;
+                    } catch (NumberFormatException e) {
+                        fields[i].setStyle("-fx-text-box-border: RED;");
+                    }
+                }
+                fields[i].clear();
             }
             else {
-                d = Integer.parseInt(fields[i].getText());
+                fields[i].setStyle("-fx-text-box-border: RED;");
             }
-            fields[i].clear();
         }
-        Houseplant h = new Houseplant(n, l, d);
-        addedPlants.add(h);
-        updateView();
-        plantDescription();
+        if (nameFilled && litresFilled && daysFilled) {
+            Houseplant h = new Houseplant(plantName, litresOfWater, daysBetweenWatering);
+            addedPlants.add(h);
+            updateView();
+            plantDescription();
+        }
     }
 
     /**
@@ -162,13 +187,11 @@ public class Main extends Application {
     private StackPane drawDayInCalendar(CalendarView calendarView) {
         StackPane cell = new StackPane();
         Text day = new Text(String.valueOf(calendarView.whatDayNumberIsIt()));
-        if (scheduler.isItTimeToWaterThisPlant(calendarView)) {
-            updateWateringDates(calendarView);
+        ArrayList<String> plantsToWaterToday = scheduler.plantsToWaterToday(calendarView);
+        if (plantsToWaterToday.size() > 0) {
             cell.getChildren().add(drawRectangle(Color.LIGHTGREEN));
-            for (Houseplant h : addedPlants) {
-               // if (scheduler.nextDateToWaterThisPlant(h, calendarView) == calendarView.whatDayIsIt()) {
-                    cell.getChildren().add(new Text(scheduler.plantToWaterToday(h, calendarView)));
-               // }
+            for (String plantinfo : plantsToWaterToday) {
+                cell.getChildren().add(new Text(plantinfo));
             }
         }
         else {
@@ -187,6 +210,7 @@ public class Main extends Application {
         VBox calpage = new VBox();
         GridPane cal = new GridPane();
         Text monthname = new Text(calendarView.whatMonthIsIt().toUpperCase());
+        monthname.setFont(Font.font("Verdana", 27.5));
         int empties = calendarView.howManyDaysOfWeekToFrameInCalendar(); // Returns the number of empty gray cells at the beginning of a calendar month
         boolean end = false;
         for (int weeknum = 0; weeknum < calendarView.howManyWeeksInCurrentMonth(); weeknum++) {
@@ -207,11 +231,22 @@ public class Main extends Application {
                 else { // Draw all other days in the calendar
                     cell.getChildren().add(drawDayInCalendar(calendarView));
                 }
+                String[] plantWateringInfo = scheduler.whenToWaterAPlant(calendarView);
+                showPlantWateringDates(plantWateringInfo);
                 cal.add(cell, weekday, weeknum);
             }
         }
         calpage.getChildren().addAll(monthname, cal);
         return calpage;
+    }
+
+    private void showPlantWateringDates(String[] plantWateringInfo) {
+        wateringDates.getChildren().clear();
+        Text plantInfo;
+        for (String info : plantWateringInfo) {
+            plantInfo = new Text(info);
+            wateringDates.getChildren().add(plantInfo);
+        }
     }
 
     @Override
@@ -220,6 +255,7 @@ public class Main extends Application {
         VBox plants = new VBox(newPlantPane(), plantDescription(), saveButton(), wateringDates);
         panel.setLeft(plants);
         panel.setCenter(calendarView());
+        updateView();
         Scene scene = new Scene(panel);
         stage.setTitle("Huonekasvien kastelun aikatauluttaja");
         stage.setScene(scene);
