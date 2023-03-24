@@ -1,7 +1,5 @@
 package com.github.niipi.ohii_harjoitustyo;
 
-import javafx.scene.text.Text;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
