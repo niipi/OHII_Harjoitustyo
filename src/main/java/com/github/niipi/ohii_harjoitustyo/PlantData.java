@@ -17,7 +17,7 @@ public class PlantData {
     /**
      * Houseplant objects are written into the save file from the ArrayList 'plants'.
      * If a save file does not exist, it is created. If it exists, it is overwritten.
-     * @param ArrayList<Houseplant>
+     * @param plants
      **/
     protected void saveToFile(ArrayList<Houseplant> plants) throws IOException {
         FileOutputStream fileout = new FileOutputStream(FILENAME);
@@ -30,7 +30,7 @@ public class PlantData {
 
     /**
      * If a save file exists, houseplant objects are read from file and added to the ArrayList 'plants'
-     * @return ArrayList<Houseplant>
+     * @return ArrayList
      **/
     protected ArrayList<Houseplant> readFromFile() {
         File plantfile = new File(FILENAME);

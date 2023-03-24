@@ -67,7 +67,7 @@ public class WateringScheduler implements WateringNeeds {
 
     /**
      * Creates a list of plant watering information based on current date.
-     * @return ArrayList<String>
+     * @return ArrayList
      **/
     public ArrayList<String> plantsToWaterToday(CalendarView calendarView) {
         ArrayList<String> plantsToWater = new ArrayList<>();
@@ -85,7 +85,7 @@ public class WateringScheduler implements WateringNeeds {
     /**
      * Maps plants to dates: a name of a houseplant in mapDates is a key with the value of all its watering dates.
      * The resulting map object is used to print and display all watering dates for the user.
-     * @params Houseplant, String
+     * @param h, date
      **/
     public void mapPlantsToDates(Houseplant h, String date) {
         if (date != null) {
