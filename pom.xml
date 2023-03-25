@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.github.niipi.ohii_harjoitustyo/com.github.niipi.ohii_harjoitustyo.HelloApplication
+                                com.github.niipi.ohii_harjoitustyo/com.github.niipi.ohii_harjoitustyo.Main
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
