@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -44,6 +45,7 @@ public class Main extends Application {
         }
         scheduler.setPlants(addedPlants);
         scheduler.setDateStrings(new String[addedPlants.size()]);
+        scheduler.setMapDates(new HashMap<>());
         panel.setCenter(calendarView());
     }
 

@@ -26,6 +26,10 @@ public class WateringScheduler implements WateringNeeds {
         this.plants = plants;
     }
 
+    public void setMapDates(HashMap<String, String> mapDates) {
+        this.mapDates = mapDates;
+    }
+
     public void setDateStrings(String[] dateStrings) {
         this.dateStrings = dateStrings;
     }
